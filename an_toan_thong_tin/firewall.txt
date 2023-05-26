@@ -1,0 +1,129 @@
+	phan chinh: network security
+1.an ninh ha tang mang: network infrastructure security
+switch, router, access point (ap) => thiet lap ha tang va 1 it chuc nang an toan
+firewall/IDS/IPS, WAF, SIEM -> thiet bi chuyen dung	
+
+gio hoc ve switch: port security, dhcp snooping
+	   ap: wifi security
+	   firewall: có ...
+	   IPS: có bfi snort
+
+sử dụng packet tracer sẽ làm về port security, dhcp snooping, wifi security
+
+1. what is an intrusion: xam nhap
+_ la tan cong vo tam giac C.I.A, => truy cap bat hop phap, gay nguy hai, pha huy cho he thong tai nguyen
+**********port security**********
+defense-in-depth: data - app- host - Lan (gio hoc ne: internal network)- perimeter - physical- {policy, procedure, awareness}
+
+bao ve lan: dinh toi switch, router, AP  (thiet bi tao LAN)
+bao ve perimeter :FW, IDS/IPS, WAF (vanh dai mang, 2 cai dau la quan trong nhat)
+
+firewall bao ke cho DMZ bang IPS va inside (LAN) bang IPS
+
+1. nguyen tac switch su dung port security: kiem soat may nao gan vo, co cho may do gan vao hay khong, dua vao dia chi MAC cua may tinh gan vao
+
+	switch se co 1 cai bang, list 1 danh sach cho vao, deny dia chi MAC, neu truong hop deny xuat hien thi se khoa cong hoac shutdown
+	
+	Ung Dung:
+	+) cac server gan vao cac port cua switch, moi server co moi MAC, moi port duoc cau hinh cho 1 dia chi MAC
+	+) nguoi dung: phong kinh doanh co 4 nguoi sai, moi may tinh 1 port, tranh su dung port lung tung; neu mua them hub de gan them pc, AP khac => dung de noi rong => nguy hiem
+
+	_Cac buoc cau hinh port security
+	--Cach 1:
+	vao switch chon port, bat security - cai dat so luong - chi ra MAC (tinh hoac dong: co nghia la gan manh tinh vao thi switch no tu hoc) - cai dat vi pham (MAC thay doi thi port switch shutdown)
+	3 dong code xanh: neu gan MAC nham -> shutdown -> gan lai MAC cu -> port van shutdown -> cau hinh lai thu cau port shutdown => thay vi cau hinh thu cong thi kiem tra theo chu ky 
+
+	Tin hieu chuyen tu mau do - cam -xanh: qua trinh chuyen trang thai port status : blocking -> listening -> learning -> forwarding
+
+	Cach active port security: 17:15
+	
+	Truyen trang thai cho nhanh -> port fast :19:00
+
+2. dhcp snooping:  chong gia DHCP server 28:35
+_ dhcp server cap IP cho may, lau lau co may AP no cũng tự cấp IP => IP lậu
+_ bươc 1: cấu hình port security cho switch server (cấu hình host name, cổng, ip chỉ định), cau hinh cho tung cai, tung cong
+_ buoc 2: tao duong di ip route tu ip switch den switch server
+=> de dhcp noi tu switch server phát IP cho máy
+_ bước 3: cấu hình cho dhcp: 33:33 -> nhanh nao thì được phát IP nào 
+_ bước 4: sử dụng IP helper address:  chuyển yêu cầu từ máy lên server thông qua switch port
+ -> làm từng cổng
+
+_ bước 5: test 39:41: tạo 1 dchp hoặc AP (là wireless router), cấu hình phát IP rồi gắn vào switch con (gần máy), 
+
+
+=> cach su dung dhcp snoop 41:45
+_bật dhcp snooping -> cấu hình trust trên port switch->chỉ định vlan -> test bang cach xem IP cua may xin ip
+
+
+3. wifi
+_ 1 so giai phap bao mạt wifi: 
++) kiem tra truy cập ko uỷ quyền
++) chứng thực qua một server
+
+_ 1 số kỹ thuật: mã hoá;  sử dụng phầm mềm, tường lửa; tắt/ ẩn broadcasting; account; change password, id
+
+_ WPA3: đặt mật khẩu xịn
+
+_ cấu hình mật khẩu wifi trên router:
++) bước 1: chỉnh IP trong dhcp của router 1:18:23
++) bước 2: cấu hình wifi trnog wireless
++) bước 3: cấu hình security  WPA2 persopnal AES (mã hoá mật khẩu)
++) bước 4: tạo laptop rồi kết nối router wifi -> connect wifi của router xong thì được server dhcp cấp cho ip
+
+
+_ sử dụng mac filter trong router: lọc xem cho mac nào bắt wifi, thằng nào ko được
+
+
+_ hệ thống wifi hiện nay
+wifi_mess -> controller -> chia về nhiều AP, mỗi AP cho 1 đối tượng sử dụng
+chứng thực bằng password; account; domain,code, policy (QoS)...
+
+=> hồi nãy khi làm mạng cục bộ (wifi cho vlan) thì phải caus hình port security cho switch để băng thông nó ổn định.
+
+_ có thể sử dụng thêm hotSpot có tác dụng như controller (internet -> hotspot + web -> switch + máy), trong hotpost có chứa web, chính sách, code đăng nhập...
+
+4. firewall: có 3 loại
+_ ngan chặn dựa trên rule, lọc những đường truyền đi qua nó
+_ có nhiều cách chia, điển hình là inside và outside (trusted và unstrusted)
+_ trong inside, chia làm nhiều khu vực, sử dụng firewall để tạo ru, tách 1 khu vực quan trọng
+
+_ firewall pocily: dieu khien user; dieu khien giao thuc, dieu huong (cấm dịch vụ bên trong ko được truy cập ra; cho phép dịch vụ từ bên ngoài đi vào chả hạn);
+
+_hành động: accecpted, denied, rejected (denied theo điều kiện)
+_ cấu trúc firewall rules: rulename, action, source, destination
+	ví dụ: allow-all, permit, inside, outside
+
+_ các rules có tính thức tự: quyền ít -> quyền nhiều
+
+_ loại 1: packet filtẻ fỉewall (stateless firewall): xử lý từng gói header
+_ loại 2: state firewall: xử lý nhiều gói cùng lúc nhưng mấy gói đó phải liên quan tới nhau như đi từ 1 nơi tới hoặc đến cùng 1 nơi
+_ loại 3: proxy firewall (layer 7)
+
+****************cấu hình: 31:52
+_ cấu hình lại inside: 34:35
++) cấu hình tại switch server: 37:32 => đăt tên rồi gắn IP cho từng cổng
++) tại switch core thì kết nối với ip server dhcp: 40:36
++) tại switch server thì kết nối 3 cái IP của mấy cái PC + switch
++) cấu hình dhcp: 42: 33
++) cấu hình fast port: 43:37	
+=> các máy cp xin được IP
+
+
+
+_ cấu hình firewall: 48:00 cho từng cổng (tên, ip )
+_ cấu hình 2 cái router: 50:00
+_ cấu hình server DNS: 52:50
+_ câí hình web server
+
+
+
+
+
+
+
+
+
+
+
+
+
